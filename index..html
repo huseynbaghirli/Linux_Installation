@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux və CentOS 10 Quraşdırma Təlimatı</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Ubuntu:wght@300;400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --terminal-bg: #0c0c0c;
+            --terminal-green: #00ff00;
+            --terminal-white: #ffffff;
+            --terminal-gray: #808080;
+            --terminal-blue: #5555ff;
+            --terminal-red: #ff5555;
+            --terminal-yellow: #ffff55;
+            --card-bg: #1a1a1a;
+            --border-color: #333;
+            --text-primary: #e5e5e5;
+            --text-secondary: #b0b0b0;
+            --accent-green: #00d000;
+            --accent-blue: #0080ff;
+        }
+
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--terminal-bg);
+            min-height: 100vh;
+        }
+
+        .terminal-header {
+            background: var(--card-bg);
+            border-bottom: 2px solid var(--terminal-green);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .terminal-title {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--terminal-green);
+            font-size: 1.8em;
+            font-weight: 500;
+        }
+
+        .terminal-title::before {
+            content: "root@linux:~$ ";
+            color: var(--terminal-blue);
+        }
+
+        .terminal-subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--terminal-gray);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: var(--terminal-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--terminal-green);
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-header::before {
+            content: "$ ";
+            color: var(--terminal-blue);
+            margin-right: 5px;
+        }
+
+        .section-content {
+            padding: 20px;
+        }
+
+        .section-content h3 {
+            color: var(--terminal-yellow);
+            font-family: 'JetBrains Mono', monospace;
+            margin: 20px 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .section-content p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .terminal-box {
+            background: var(--terminal-bg);
+            border: 1px solid var(--terminal-green);
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .terminal-prompt {
+            color: var(--terminal-blue);
+        }
+
+        .terminal-command {
+            color: var(--terminal-green);
+        }
+
+        .terminal-output {
+            color: var(--terminal-white);
+            margin-left: 0;
+        }
+
+        .step {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--terminal-green);
+            margin: 20px 0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .step-header {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 15px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--terminal-green);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-number {
+            background: var(--terminal-green);
+            color: var(--terminal-bg);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9em;
+        }
+
+        .step-content {
+            padding: 20px;
+        }
+
+        .image-container {
+            background: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .image-caption {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--terminal-gray);
+            font-size: 0.8em;
+            margin-top: 10px;
+        }
+
+        .image-caption::before {
+            content: "# ";
+            color: var(--terminal-green);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--terminal-green);
+        }
+
+        .feature-card h4 {
+            color: var(--terminal-green);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .warning-box {
+            background: rgba(255, 85, 85, 0.1);
+            border: 1px solid var(--terminal-red);
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .warning-box h4 {
+            color: var(--terminal-red);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 10px;
+        }
+
+        .warning-box h4::before {
+            content: "⚠ ";
+        }
+
+        .info-box {
+            background: rgba(0, 128, 255, 0.1);
+            border: 1px solid var(--terminal-blue);
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .info-box h4 {
+            color: var(--terminal-blue);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 10px;
+        }
+
+        .info-box h4::before {
+            content: "ℹ ";
+        }
+
+        .success-box {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--terminal-green);
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .success-box h4 {
+            color: var(--terminal-green);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 10px;
+        }
+
+        .success-box h4::before {
+            content: "✓ ";
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--terminal-green);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -42px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: var(--terminal-green);
+            border-radius: 50%;
+            border: 3px solid var(--terminal-bg);
+        }
+
+        .timeline-year {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--terminal-green);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .code-block {
+            background: var(--terminal-bg);
+            border: 1px solid var(--terminal-green);
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-block::before {
+            content: "# Code Block";
+            color: var(--terminal-gray);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.8em;
+        }
+
+        ul, ol {
+            color: var(--text-secondary);
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        .toc {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .toc h3 {
+            color: var(--terminal-green);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .toc li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--terminal-green);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .toc a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .toc a:hover {
+            color: var(--terminal-green);
+        }
+
+        .image-error {
+            background: rgba(255, 85, 85, 0.1);
+            border: 1px solid var(--terminal-red);
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            color: var(--terminal-red);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .image-loading {
+            background: var(--terminal-bg);
+            border: 1px dashed var(--terminal-green);
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            color: var(--terminal-green);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .minimal-highlight {
+            border-left: 4px solid var(--terminal-yellow);
+            background: rgba(255, 255, 85, 0.1);
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .minimal-highlight h4 {
+            color: var(--terminal-yellow);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .terminal-title {
+                font-size: 1.4em;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-content {
+                padding: 15px;
+            }
+        }
+
+        /* Terminal cursor animation */
+        .cursor {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--terminal-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--terminal-green);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-header">
+        <div class="terminal-title">Linux və CentOS 10 Quraşdırma Təlimatı<span class="cursor">_</span></div>
+        <div class="terminal-subtitle"># Azad və açıq mənbə əməliyyat sisteminin gücü</div>
+    </div>
+
+    <div class="container">
+        <div class="toc">
+            <h3>Mündəricat</h3>
+            <ul>
+                <li><a href="#linux-nedir">Linux nədir?</a></li>
+                <li><a href="#linux-tarixi">Linux Tarixi</a></li>
+                <li><a href="#linux-xususiyyetleri">Linux-un Xüsusiyyətləri</a></li>
+                <li><a href="#centos-haqqinda">CentOS 10 haqqında</a></li>
+                <li><a href="#qurashirma-prosesi">Quraşdırma Prosesi</a></li>
+            </ul>
+        </div>
+
+        <div class="section" id="linux-nedir">
+            <div class="section-header">Linux nədir?</div>
+            <div class="section-content">
+                <p>Linux - bu azad və açıq mənbə əməliyyat sistemidir. 1991-ci ildə Linus Torvalds tərəfindən yaradılmış bu sistem, Unix əməliyyat sistemindən ilham alınmışdır və bu gün dünyanın ən populyar əməliyyat sistemlərindən biridir.</p>
+                
+                <div class="terminal-box">
+                    <div class="terminal-prompt">user@system:~$ </div>
+                    <div class="terminal-command">uname -a</div>
+                    <div class="terminal-output">Linux hostname 6.1.0-centos10 #1 SMP x86_64 GNU/Linux</div>
+                </div>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>Açıq Mənbə</h4>
+                        <p>Linux tamamilə pulsuz və açıq mənbədir. İstənilən şəxs kodunu görmək, dəyişdirmək və paylaşmaq hüququna malikdir.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Təhlükəsizlik</h4>
+                        <p>Güclü təhlükəsizlik xüsusiyyətləri ilə məşhurdur. Viruslar və zərərli proqramlar üçün daha az həssasdır.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Performans</h4>
+                        <p>Yüksək performans və sabitlik təmin edir. Serverlər və superkompüterlər üçün ideal seçimdir.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Çeviklik</h4>
+                        <p>Fərdi ehtiyaclara uyğun olaraq fərdiləşdirilə bilər. Müxtəlif distribusiyalar mövcuddur.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="linux-tarixi">
+            <div class="section-header">Linux-un Tarixi</div>
+            <div class="section-content">
+                <p>Linux-un inkişaf tarixi innovasiya və icma əməkdaşlığının parlaq nümunəsidir:</p>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">1991</div>
+                        <p><strong>Başlanğıc:</strong> Linus Torvalds Finlandiya Helsinkinin Universitetində tələbə iken Linux nüvəsinin ilk versiyasını yazdı.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">1992</div>
+                        <p><strong>GPL Lisenziyası:</strong> Linux GNU GPL lisenziyası altında buraxıldı və tamamilə azad proqram təminatı oldu.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">1993</div>
+                        <p><strong>İlk Distribusiyalar:</strong> Slackware və Debian kimi ilk Linux distribusiyaları yarandı.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">1994</div>
+                        <p><strong>Red Hat:</strong> Red Hat şirkəti yarandı və kommersiya Linux dəstəyi təqdim etməyə başladı.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2000-ci illər</div>
+                        <p><strong>Böyük İnkişaf:</strong> Linux server bazarında dominant mövqe qazandı və iri şirkətlər tərəfindən qəbul edildi.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2010-ci illər</div>
+                        <p><strong>Bulud Dövründə:</strong> Bulud hesablama və konteyner texnologiyalarının inkişafı ilə Linux daha da populyarlaşdı.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2020-ci illər</div>
+                        <p><strong>Müasir Dövr:</strong> Süni intellekt, IoT və Edge Computing sahələrində Linux liderlik edir.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="linux-xususiyyetleri">
+            <div class="section-header">Linux-un Əsas Xüsusiyyətləri</div>
+            <div class="section-content">
+                
+                <div class="info-box">
+                    <h4>Niyə Linux Yaradıldı?</h4>
+                    <p>Linux yaradılmasının əsas səbəbləri:</p>
+                    <ul>
+                        <li><strong>Azadlıq:</strong> Proprietary sistemlərdən asılı olmamaq</li>
+                        <li><strong>Əlçatanlılıq:</strong> Hər kəs üçün pulsuz əməliyyat sistemi</li>
+                        <li><strong>İnnovasiya:</strong> Açıq inkişaf modeli vasitəsilə sürətli inkişaf</li>
+                        <li><strong>Təhsil:</strong> Sistemin daxili işlərini öyrənmək imkanı</li>
+                    </ul>
+                </div>
+
+                <h3>Texniki Üstünlüklər</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>Modul Arxitektura</h4>
+                        <p>Kernel modulları dinamik yüklənə və çıxarıla bilər</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Çox Məqsədli</h4>
+                        <p>Serverdən mobil cihazlara qədər hər yerdə istifadə oluna bilər</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Şəbəkə Dəstəyi</h4>
+                        <p>Güclü şəbəkə protokolları və serverlər üçün optimal</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>İnkişaf Mühiti</h4>
+                        <p>Proqramçılar üçün zəngin alətlər və kitabxanalar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="centos-haqqinda">
+            <div class="section-header">CentOS 10 haqqında</div>
+            <div class="section-content">
+                <p>CentOS (Community Enterprise Operating System) - RHEL (Red Hat Enterprise Linux) əsasında yaradılmış azad və açıq mənbə Linux distribusiyasıdır.</p>
+                
+                <div class="success-box">
+                    <h4>CentOS 10-un Yeni Xüsusiyyətləri</h4>
+                    <ul>
+                        <li><strong>Yenilənmiş Kernel:</strong> Linux 6.x seriyası ilə daha yaxşı performans</li>
+                        <li><strong>Konteyner Dəstəyi:</strong> Docker və Podman üçün güclü dəstək</li>
+                        <li><strong>Təhlükəsizlik:</strong> SELinux və Firewalld gücləndirilmiş versiyaları</li>
+                        <li><strong>İdarəetmə:</strong> Cockpit web interfeysi ilə asan idarəetmə</li>
+                    </ul>
+                </div>
+
+                <h3>Quraşdırma Növləri</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>Standard Quraşdırma</h4>
+                        <p>GUI (Qrafik İstifadəçi İnterfeysi) ilə tam funksional desktop mühiti. Yeni başlayanlar üçün ideal.</p>
+                        <ul style="margin-top: 10px; font-size: 0.9em;">
+                            <li>GNOME və ya KDE desktop mühiti</li>
+                            <li>Qrafik proqramlar və alətlər</li>
+                            <li>Daha çox sistem resursu tələb edir</li>
+                            <li>Desktop istifadəsi üçün uyğun</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4>Minimal Quraşdırma</h4>
+                        <p>Yalnız əsas sistem komponentləri. GUI yoxdur, sadəcə terminal (command line) interfeysi.</p>
+                        <ul style="margin-top: 10px; font-size: 0.9em;">
+                            <li>Yalnız terminal (qara ekran) interfeysi</li>
+                            <li>Minimum sistem resursu istifadəsi</li>
+                            <li>Server və ya xüsusi məqsədlər üçün</li>
+                            <li>Əl ilə paket quraşdırma lazımdır</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="minimal-highlight">
+                    <h4>Minimal Quraşdırma Nə Zaman Seçmək Lazımdır?</h4>
+                    <ul>
+                        <li><strong>Server İstifadəsi:</strong> Web server, database server, mail server kimi</li>
+                        <li><strong>Resurs Qənaəti:</strong> Az RAM və disk sahəsi olan sistemlər üçün</li>
+                        <li><strong>Təhlükəsizlik:</strong> Minimum komponent = minimum risk</li>
+                        <li><strong>Remote İdarəetmə:</strong> SSH ilə uzaqdan idarə olunacaq sistemlər</li>
+                        <li><strong>Konteyner Host:</strong> Docker və ya Kubernetes node-ları üçün</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="qurashirma-prosesi">
+            <div class="section-header">CentOS 10 Quraşdırma Prosesi</div>
+            <div class="section-content">
+                <p>CentOS 10-u quraşdırmaq üçün aşağıdakı addımları izləyin:</p>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        ISO Faylını Endirin
+                    </div>
+                    <div class="step-content">
+                        <p>CentOS 10 ISO faylını rəsmi saytdan endirin. DVD və ya minimal ISO versiyasını seçə bilərsiniz.</p>
+
+                            <div class="image-caption">CentOS 10 ISO faylının endirilməsi</div>
+							                    <div class="step-number">1</div>
+                    <h4>ISO Faylını Endirin</h4>
+                    <p>CentOS 10 ISO faylını rəsmi saytdan endirin. DVD və ya minimal ISO versiyasını seçə bilərsiniz.</p>
+                    <div class="image-container">
+                        <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/1.isodownload.gif" alt="ISO Download Prosesi" />
+                        <div class="image-caption">CentOS 10 ISO faylının endirilməsi</div>
+                    </div>
+                </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        Virtual Maşın Yaradın
+                    </div>
+                    <div class="step-content">
+                        <p>VMware, VirtualBox və ya digər virtualizasiya proqramında yeni virtual maşın yaradın və minimum 2GB RAM ayırın.</p>
+                        <div class="code-block">
+                            VM Spesifikasiyaları:
+                            - RAM: 2GB minimum (4GB tövsiyə olunur)
+                            - Disk: 20GB minimum
+                            - CPU: 1 core minimum
+                            - Network: NAT və ya Bridge
+                        </div>
+                   <div class="step-number">2</div>
+                    <h4>Virtual Maşın Yaradın</h4>
+                    <p>VMware, VirtualBox və ya digər virtualizasiya proqramında yeni virtual maşın yaradın və minimum 2GB RAM ayırın.</p>
+                    <div class="image-container">
+                        <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/2.createVm.gif" alt="Virtual Maşın Yaratma" />
+                        <div class="image-caption">Virtual maşının yaradılması və konfiqurasiyası</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        CentOS Quraşdırmasını Başladın
+                    </div>
+                    <div class="step-content">
+                        <p>ISO faylını virtual maşına attach edin və CentOS installer-ni başladın. "Install CentOS" seçimini seçin.</p>
+                        <div class="image-container">
+                            <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/3.InstallCentoss.gif" 
+                                 alt="CentOS Quraşdırma" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <div class="image-error" style="display: none;">
+                                [Şəkil yüklənə bilmədi]<br>
+                                Error: Unable to load GIF<br>
+                                Manual: Boot from ISO > Select "Install CentOS"
+                            </div>
+                            <div class="image-caption">CentOS quraşdırma prosesinin başladılması</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        Quraşdırma Növünü Seçin
+                    </div>
+                    <div class="step-content">
+                        <p>CentOS quraşdırarkən iki əsas seçim var: <strong>Standard</strong> (GUI ilə) və ya <strong>Minimal</strong> (yalnız terminal). Minimal seçim daha az resurs istifadə edir.Biz indi Server With Gui secimi ile davam edecik </p>
+                        <div class="image-container">
+                            <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/minimalinstalation.png" 
+                                 alt="Minimal Installation Seçimi"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <div class="image-error" style="display: none;">
+                                [Şəkil yüklənə bilmədi: Minimal Installation]<br>
+                                Manual: Software Selection > Minimal Install
+                            </div>
+                            <div class="image-caption">Minimal Installation seçiminin edilməsi - GUI yoxdur, yalnız terminal</div>
+                        </div>
+                        <div class="minimal-highlight">
+                            <h4>Minimal Installation Xüsusiyyətləri</h4>
+                            <ul>
+                                <li><strong>GUI Yoxdur:</strong> Qrafik interfeys quraşdırılmır</li>
+                                <li><strong>Terminal Əsaslı:</strong> Bütün idarəetmə command line ilə</li>
+                                <li><strong>Kiçik Ölçü:</strong> ~1-2 GB disk sahəsi</li>
+                                <li><strong>Az RAM:</strong> 512MB-1GB RAM kifayətdir</li>
+                                <li><strong>Server Üçün İdeal:</strong> Web server, database üçün perfect</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">5</div>
+                        Disk və Şəbəkə Ayarları , User yaradılması
+                    </div>
+                    <div class="step-content">
+                        <p>Sistem dilini, disk bölmələnməsini və şəbəkə parametrlərini tənzimləyin. Zaman zonasını da seçin.</p>
+                        <div class="terminal-box">
+                            <div class="terminal-prompt"># </div>
+                            <div class="terminal-command">Ayarlanacaq parametrlər:</div>
+                            <div class="terminal-output">
+
+Disk: Auto/Manual Partitioning<br>
+Network: DHCP/Static IP
+                            </div>
+                        </div>
+                        <div class="image-container">
+                            <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/4.Language%20,%20Disk%20,%20User%20Network%20Define%20.gif" 
+                                 alt="Sistem Ayarları"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <div class="image-error" style="display: none;">
+                                [Şəkil yüklənə bilmədi: System Settings]<br>
+                                Manual: Configure Language > Disk > Network
+                            </div>
+                            <div class="image-caption">Dil, disk və şəbəkə ayarlarının konfiqurasiyası</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">6</div>
+                        Quraşdırma Prosesi
+                    </div>
+                    <div class="step-content">
+                        <p>Bütün ayarları təsdiq etdikdən sonra quraşdırma prosesi başlayacaq. Bu proses bir neçə dəqiqə çəkə bilər.</p>
+                        <div class="terminal-box">
+                            <div class="terminal-prompt">Installing: </div>
+                            <div class="terminal-command">████████████████████ 100%</div>
+                            <div class="terminal-output">
+Installing packages... [████████████████████] 100%<br>
+Configuring system... [██████████████████  ] 90%<br>
+Finalizing installation... [████████████████] 95%
+                            </div>
+                        </div>
+                        <div class="image-container">
+                            <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/5.Installation%20Progress.gif" 
+                                 alt="Quraşdırma Prosesi"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <div class="image-error" style="display: none;">
+                                [Şəkil yüklənə bilmədi: Installation Progress]<br>
+                                Manual: Wait for installation to complete
+                            </div>
+                            <div class="image-caption">CentOS quraşdırma prosesinin gedişatı</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">7</div>
+                        Minimal Sistemə Giriş
+                    </div>
+                    <div class="step-content">
+                        <p>Minimal quraşdırmada sistem yenidən başladıqdan sonra sizi terminal (qara ekran) qarşılayacaq. GUI yoxdur!</p>
+                        <div class="image-container">
+                            <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/minimalinstallation_not_gui.png" 
+                                 alt="Minimal Sistem Terminal"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <div class="image-error" style="display: none;">
+                                [Şəkil yüklənə bilmədi: Minimal Terminal]<br>
+                                Description: Black screen with login prompt
+                            </div>
+                            <div class="image-caption">Minimal installation - GUI yoxdur, yalnız terminal (qara ekran)</div>
+                        </div>
+                        <div class="terminal-box">
+                            <div class="terminal-output">
+CentOS Linux 10 (Core)<br>
+Kernel 6.1.0 on an x86_64<br><br>
+localhost login: <span class="cursor">_</span>
+                            </div>
+                        </div>
+                        <div class="warning-box">
+                            <h4>Terminal Mühiti</h4>
+                            <ul>
+                                <li><strong>Qara Ekran:</strong> Yalnız mətn əsaslı interfeys</li>
+                                <li><strong>Command Line:</strong> Bütün əmrlər klaviatura ilə</li>
+                                <li><strong>Root Login:</strong> İstifadəçi adı və parol ilə giriş</li>
+                                <li><strong>Əsas Əmrlər:</strong> ls, cd, pwd, nano kimi əmrlər</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">8</div>
+                        Standard Sistemə Giriş (GUI ilə)
+                    </div>
+                    <div class="step-content">
+                        <p>Əgər standard quraşdırma etmisinizsə, qrafik interfeys mövcud olacaq və istifadəçi hesabı ilə giriş edə bilərsiniz.</p>
+                        <div class="image-container">
+                            <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/6.Login%20.gif" 
+                                 alt="GUI Sistemə Giriş"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <div class="image-error" style="display: none;">
+                                [Şəkil yüklənə bilmədi: GUI Login]<br>
+                                Description: Graphical login screen with desktop environment
+                            </div>
+                            <div class="image-caption">Standard quraşdırmada qrafik interfeys ilə giriş</div>
+                        </div>
+                        <div class="success-box">
+                            <h4>GUI Xüsusiyyətləri</h4>
+                            <ul>
+                                <li>GNOME və ya KDE desktop mühiti</li>
+                                <li>Qrafik proqramlar və alətlər</li>
+                                <li>File manager və text editor</li>
+                                <li>Web browser və multimedia support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">9</div>
+                        Sistem Məlumatları və Naviqasiya
+                    </div>
+                    <div class="step-content">
+                        <p>Sistemdə naviqasiya üçün faydalı əmr və məlumatları öyrənin. IP adres, sistem məlumatları və s.</p>
+                        <div class="terminal-box">
+                            <div class="terminal-prompt">root@centos:~# </div>
+                            <div class="terminal-command">ip addr show</div>
+                            <div class="terminal-output">
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536<br>
+    inet 127.0.0.1/8 scope host lo<br>
+2: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500<br>
+    inet 192.168.1.100/24 brd 192.168.1.255 scope global enp0s3
+                            </div>
+                        </div>
+                        <div class="image-container">
+                            <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/7.ShowMeIP.gif" 
+                                 alt="Sistemdə Naviqasiya"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <div class="image-error" style="display: none;">
+                                [Şəkil yüklənə bilmədi: System Navigation]<br>
+                                Commands: ip addr, hostname, whoami, uname -a
+                            </div>
+                            <div class="image-caption">Sistem məlumatları və əsas əmrlər</div>
+                        </div>
+                        <div class="code-block">
+Faydalı əmrlər:
+# Sistem məlumatı
+uname -a
+hostname
+whoami
+uptime
+
+# Şəbəkə məlumatı  
+ip addr show
+ping google.com
+netstat -tuln
+
+# Disk məlumatı
+df -h
+lsblk
+mount
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-header">
+                        <div class="step-number">10</div>
+                        Windows ilə SSH Əlaqəsi
+                    </div>
+                    <div class="step-content">
+                        <p>SSH vasitəsilə Windows-dan CentOS sistemə qoşulun. Bu xüsusilə minimal installation üçün vacibdir.</p>
+                        <div class="terminal-box">
+                            <div class="terminal-prompt">C:\Users\User&gt; </div>
+                            <div class="terminal-command">ssh root@192.168.1.100</div>
+                            <div class="terminal-output">
+The authenticity of host '192.168.1.100' can't be established.<br>
+ECDSA key fingerprint is SHA256:xxx...<br>
+Are you sure you want to continue connecting (yes/no)? yes<br>
+root@192.168.1.100's password: <br>
+Last login: Tue Jun  3 15:30:21 2025 from 192.168.1.50<br>
+[root@centos ~]# <span class="cursor">_</span>
+                            </div>
+                        </div>
+                        <div class="image-container">
+                            <img src="https://github.com/huseynbaghirli/Linux_Installation/raw/main/images_gif/8.WindowsconnectwithSSh.gif" 
+                                 alt="SSH Bağlantısı"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <div class="image-error" style="display: none;">
+                                [Şəkil yüklənə bilmədi: SSH Connection]<br>
+                                Tools: PuTTY, Windows Terminal, Git Bash
+                            </div>
+                            <div class="image-caption">Windows-dan SSH ilə CentOS-a qoşulma</div>
+                        </div>
+                        <div class="info-box">
+                            <h4>SSH ilə Uzaqdan İdarəetmə</h4>
+                            <ul>
+                                <li><strong>PuTTY:</strong> Windows üçün populyar SSH klienti</li>
+                                <li><strong>Windows Terminal:</strong> Built-in SSH dəstəyi</li>
+                                <li><strong>Remote Management:</strong> Fiziki ekrana ehtiyac yoxdur</li>
+                                <li><strong>Secure Connection:</strong> Şifrələnmiş əlaqə</li>
+                                <li><strong>File Transfer:</strong> SCP və SFTP dəstəyi</li>
+                            </ul>
+                        </div>
+                        <div class="code-block">
+SSH üçün lazım olan ayarlar:
+# SSH serveri aktivləşdirin
+systemctl enable sshd
+systemctl start sshd
+
+# Firewall-da SSH portunu açın
+firewall-cmd --permanent --add-service=ssh
+firewall-cmd --reload
+
+# SSH status yoxlayın
+systemctl status sshd
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>Əlavə Məsləhətlər</h4>
+                    <ul>
+                        <li><strong>Yenilənmələr:</strong> <code>sudo dnf update</code> əmri ilə sistemi yeniləyin</li>
+                        <li><strong>Firewall:</strong> Təhlükəsizlik üçün lazım olmayan portları bağlayın</li>
+                        <li><strong>Backup:</strong> Mühüm məlumatları mütəmadi olaraq ehtiyat nüsxələyin</li>
+                        <li><strong>Monitoring:</strong> Sistemin performansını izləmək üçün monitoring alətləri quraşdırın</li>
+                    </ul>
+                </div>
+
+                <div class="minimal-highlight">
+                    <h4>Minimal vs Standard Quraşdırma</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                        <div class="success-box">
+                            <h4>Minimal Üstünlükləri</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>Az resurs istifadəsi (512MB RAM)</li>
+                                <li>Sürətli quraşdırma (~10 dəqiqə)</li>
+                                <li>Yüksək təhlükəsizlik</li>
+                                <li>Server işləri üçün ideal</li>
+                                <li>SSH remote management</li>
+                            </ul>
+                        </div>
+                        <div class="warning-box">
+                            <h4>Minimal Məhdudiyyətləri</h4>
+                            <ul style="font-size: 0.9em;">
+                                <li>GUI yoxdur (qara ekran)</li>
+                                <li>Command line bilikləri lazım</li>
+                                <li>Əl ilə paket quraşdırma</li>
+                                <li>Desktop istifadəsi mümkün deyil</li>
+                                <li>Yeni başlayanlar üçün çətin</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">Təbriklər! Quraşdırma Tamamlandı</div>
+            <div class="section-content">
+                <p>CentOS 10 uğurla quraşdırıldı! İndi siz güclü, təhlükəsiz və sabit Linux əməliyyat sistemindən istifadə edə bilərsiniz. Linux-un açıq mənbə fəlsəfəsi sayəsində siz sistemi öz ehtiyaclarınıza uyğun olaraq fərdiləşdirə və inkişaf etdirə bilərsiniz.</p>
+                
+                <div class="terminal-box">
+                    <div class="terminal-prompt">[root@centos ~]# </div>
+                    <div class="terminal-command">echo "Welcome to Linux World!"</div>
+                    <div class="terminal-output">Welcome to Linux World!</div>
+                    <div class="terminal-prompt">[root@centos ~]# </div>
+                    <div class="terminal-command">uname -sr</div>
+                    <div class="terminal-output">Linux 6.1.0-centos10</div>
+                </div>
+                
+                <div class="success-box">
+                    <h4>Növbəti Addımlar</h4>
+                    <p>CentOS 10 ilə işləməyə davam etmək üçün:</p>
+                    <ul>
+                        <li>Əsas Linux əmrlərini öyrənin (ls, cd, pwd, man)</li>
+                        <li>Paket idarəçiliyini (DNF) öyrənin</li>
+                        <li>Sistem administrasiyası bacarıqlarını inkişaf etdirin</li>
+                        <li>Server xidmətlərini quraşdırın və idarə edin</li>
+                        <li>Shell scripting öyrənin</li>
+                        <li>Şəbəkə konfiqurasiyası və firewall ayarları</li>
+                    </ul>
+                </div>
+
+                <div class="code-block">
+Əsas Linux əmrləri:
+# File operations
+ls -la          # List files with details
+cd /path        # Change directory  
+pwd             # Print working directory
+mkdir dirname   # Create directory
+rm filename     # Remove file
+
+# System info
+ps aux          # Process list
+top             # System monitor
+free -h         # Memory usage
+df -h           # Disk usage
+
+# Package management
+dnf update      # Update packages
+dnf install pkg # Install package
+dnf search pkg  # Search package
+                </div>
+
+                <div class="info-box">
+                    <h4>Faydalı Resurslar</h4>
+                    <ul>
+                        <li><strong>CentOS Dokumentasiya:</strong> https://docs.centos.org/</li>
+                        <li><strong>Linux Command Reference:</strong> man komandası</li>
+                        <li><strong>SSH Key Setup:</strong> ssh-keygen və ssh-copy-id</li>
+                        <li><strong>System Logs:</strong> /var/log/ qovluğu</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Terminal cursor blinking
+        setInterval(() => {
+            const cursors = document.querySelectorAll('.cursor');
+            cursors.forEach(cursor => {
+                cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0';
+            });
+        }, 1000);
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Image error handling with better fallback
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('error', function() {
+                console.log('Failed to load image:', this.src);
+                this.style.display = 'none';
+                const errorDiv = this.nextElementSibling;
+                if (errorDiv && errorDiv.classList.contains('image-error')) {
+                    errorDiv.style.display = 'block';
+                }
+            });
+            
+            img.addEventListener('load', function() {
+                console.log('Successfully loaded image:', this.src);
+            });
+        });
+
+        // Add typing effect to terminal commands
+        function typeEffect(element, text, speed = 50) {
+            let i = 0;
+            const timer = setInterval(() => {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(timer);
+                }
+            }, speed);
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe sections for fade-in effect
+        document.querySelectorAll('.section, .step').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Add hover effects to cards
+        document.querySelectorAll('.feature-card, .step').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.transition = 'transform 0.3s ease';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Console welcome message
+        console.log(`
+
+$$\       $$\                               
+$$ |      \__|                              
+$$ |      $$\ $$$$$$$\  $$\   $$\ $$\   $$\ 
+$$ |      $$ |$$  __$$\ $$ |  $$ |\$$\ $$  |
+$$ |      $$ |$$ |  $$ |$$ |  $$ | \$$$$  / 
+$$ |      $$ |$$ |  $$ |$$ |  $$ | $$  $$<  
+$$$$$$$$\ $$ |$$ |  $$ |\$$$$$$  |$$  /\$$\ 
+\________|\__|\__|  \__| \______/ \__/  \__|
+                                            
+                                            
+                                            
+
+
+CentOS 10 Quraşdırma Təlimatı Yükləndi!
+`);
+    </script>
+</body>
+</html>
+                                
